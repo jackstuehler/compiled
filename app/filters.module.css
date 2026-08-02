@@ -1,0 +1,39 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 18px;
+}
+
+/* A <fieldset> groups related controls together. Browsers draw a border
+   around it by default, which we don't want here. */
+.fieldset {
+  border: none;
+}
+
+/* A <legend> is the fieldset's caption — the word "Type". */
+.legend {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Pushes the Done button to the right edge of the form. */
+.doneButton {
+  align-self: flex-end;
+}

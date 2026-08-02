@@ -2,52 +2,53 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { CSSProperties } from "react";
+import styles from "./nav.module.css";
 
-const LINKS = [
+// The screens in the app. To add a third, add one line here.
+const SCREENS = [
   { href: "/", label: "Compare colleges" },
   { href: "/scatter", label: "Scatterplot" },
 ];
 
-const linkStyle: CSSProperties = {
-  padding: "8px 14px",
-  fontSize: 15,
-  textDecoration: "none",
-  color: "inherit",
-  borderWidth: 1,
-  borderStyle: "solid",
-  borderColor: "#8886",
-  borderRadius: 6,
-  backgroundColor: "transparent",
-  fontWeight: 400,
-};
-
-const activeStyle: CSSProperties = {
-  ...linkStyle,
-  fontWeight: 600,
-  backgroundColor: "#8882",
-  borderColor: "#8889",
-};
-
 export default function Nav() {
+  // The part of the URL before the "?" — either "/" or "/scatter".
+  // We compare against it to find which screen we're on.
   const pathname = usePathname();
+
+  // The part of the URL after the "?", as an object we can read values out of.
   const searchParams = useSearchParams();
 
+  // Carry the selected major from screen to screen. If the current URL is
+  // "/?major=1107", we add "?major=1107" to both nav links, so switching
+  // screens keeps you on the same major. encodeURIComponent makes the value
+  // safe to drop into a URL.
   const major = searchParams.get("major");
-  const suffix = major ? `?major=${encodeURIComponent(major)}` : "";
+  let majorSuffix = "";
+  if (major) {
+    majorSuffix = `?major=${encodeURIComponent(major)}`;
+  }
 
   return (
-    <nav style={{ display: "flex", gap: 8, margin: "16px 0 24px" }}>
-      {LINKS.map((l) => {
-        const active = pathname === l.href;
+    <nav className={styles.nav}>
+      {SCREENS.map((screen) => {
+        const isActive = pathname === screen.href;
+
+        // Every link gets the "link" class. The current screen's link gets
+        // "active" as well, which overrides a few of the properties.
+        let className = styles.link;
+        if (isActive) {
+          className = `${styles.link} ${styles.active}`;
+        }
+
         return (
           <Link
-            key={l.href}
-            href={`${l.href}${suffix}`}
-            style={active ? activeStyle : linkStyle}
-            aria-current={active ? "page" : undefined}
+            key={screen.href}
+            href={screen.href + majorSuffix}
+            className={className}
+            // Tells screen readers which link is the page they're on.
+            aria-current={isActive ? "page" : undefined}
           >
-            {l.label}
+            {screen.label}
           </Link>
         );
       })}

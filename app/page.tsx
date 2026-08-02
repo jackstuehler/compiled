@@ -1,57 +1,23 @@
-import { RowDataPacket } from "mysql2";
-import { pool } from "@/lib/db";
-import MajorPicker, { Major } from "./major-picker";
-import CollegeTable, { School } from "./college-table";
-
-type MajorRow = RowDataPacket & Major;
-type SchoolRow = RowDataPacket & School;
-
-const DEFAULT_MAJOR = "1107"; // Computer Science
+import MajorPicker from "./major-picker";
+import CollegeTable from "./college-table";
+import { DEFAULT_MAJOR, loadMajorData } from "@/lib/queries";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ major?: string }>;
 }) {
+  // searchParams arrives as a promise, not an object: Next can begin rendering
+  // the page before it has finished working out the request's query string.
   const { major } = await searchParams;
   const selected = major ?? DEFAULT_MAJOR;
 
-  const [majorRows] = await pool.query<MajorRow[]>(
-    `SELECT m.cip_code, m.cip_desc
-       FROM majors m
-       JOIN fos_bachelors f ON f.cip_code = m.cip_code
-       JOIN institutions i ON i.unitid = f.unitid
-      WHERE f.earn_mdn_4yr IS NOT NULL
-      GROUP BY m.cip_code, m.cip_desc
-     HAVING COUNT(*) >= 5
-      ORDER BY m.cip_desc`,
-  );
-
-  const [schoolRows] = await pool.query<SchoolRow[]>(
-    `SELECT i.unitid, i.instnm, i.city, i.stabbr, i.control, i.ugds, i.stufacr,
-            i.adm_rate, i.sat_avg, i.actcm50, i.grad_rate, i.npt4,
-            i.md_earn_4yr, f.earn_mdn_4yr,
-            i.grad_debt_mdn, f.debt_all_stgp_eval_mdn
-       FROM fos_bachelors f
-       JOIN institutions i ON i.unitid = f.unitid
-      WHERE f.cip_code = ? AND f.earn_mdn_4yr IS NOT NULL
-      ORDER BY f.earn_mdn_4yr DESC`,
-    [selected],
-  );
-
-  const majors: Major[] = majorRows.map(({ cip_code, cip_desc }) => ({
-    cip_code,
-    cip_desc,
-  }));
-
-  const schools: School[] = schoolRows.map((r) => ({ ...r }));
-
-  const current = majors.find((m) => m.cip_code === selected);
+  const { majors, schools, majorName } = await loadMajorData(selected);
 
   return (
     <>
       <MajorPicker majors={majors} selected={selected} />
-      <h2>{current?.cip_desc ?? "Unknown major"}</h2>
+      <h2>{majorName}</h2>
       <CollegeTable rows={schools} />
     </>
   );

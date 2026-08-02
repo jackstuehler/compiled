@@ -1,0 +1,99 @@
+/* ---------- the controls above the table ---------- */
+
+.controls {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+/* Keeps the "Sort by" menu and its direction button side by side. */
+.sortGroup {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.orderButton {
+  line-height: 1.4;
+  min-width: 40px;
+}
+
+/* ---------- the table ---------- */
+
+/* The box that scrolls. Both scrollbars belong to this element, and that is
+   exactly what lets the header row and first column stick: a sticky cell
+   sticks to its nearest scrolling ancestor, which is this. */
+.scrollBox {
+  overflow: auto;
+  max-height: 70vh;
+  border: 1px solid var(--border-subtle);
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Applies to every header and body cell. */
+.table th,
+.table td {
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.table th {
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  /* A sticky cell needs an opaque background, or the rows sliding underneath
+     show through it. */
+  background-color: var(--background);
+  /* This is a bottom border in everything but name. A real border-bottom
+     scrolls out of view here, because border-collapse hands ownership of the
+     border to the table rather than the cell. An inset box-shadow is painted
+     inside the cell, so it travels with it. */
+  box-shadow: inset 0 -2px 0 var(--border-heavy);
+}
+
+/* Body cells scroll normally, so an ordinary border is fine. */
+.table td {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Right-aligns a column of numbers so the digits line up by place value. */
+.numeric {
+  text-align: right;
+}
+
+/* ---------- the sticky first column ---------- */
+
+.table th.firstColumn,
+.table td.firstColumn {
+  position: sticky;
+  left: 0;
+  background-color: var(--background);
+}
+
+/* Stacking order, lowest to highest: ordinary cells (no z-index), sticky body
+   cells (1), the header row (2), and the top-left corner cell (3), which has
+   to sit above both the row it's in and the column it's in. */
+.table td.firstColumn {
+  z-index: 1;
+  box-shadow: inset -2px 0 0 var(--border);
+}
+
+.table th.firstColumn {
+  z-index: 3;
+  box-shadow:
+    inset -2px 0 0 var(--border),
+    inset 0 -2px 0 var(--border-heavy);
+}
+
+/* The faded position number before each college name. */
+.rank {
+  opacity: 0.5;
+  margin-right: 8px;
+}

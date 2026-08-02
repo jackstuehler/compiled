@@ -1,0 +1,10 @@
+.page {
+  padding: 40px;
+}
+
+/* Holds the nav's space while it loads, so the content below doesn't jump
+   downward when it appears. */
+.navPlaceholder {
+  height: 39px;
+  margin: 16px 0 24px;
+}
