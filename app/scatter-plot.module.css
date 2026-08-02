@@ -1,0 +1,37 @@
+.layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 260px;
+  /* Never let the sidebar get squeezed. If there isn't room for both, the
+     flex container wraps the chart underneath instead. */
+  flex-shrink: 0;
+}
+
+/* The chart takes whatever width is left over, down to a floor of 420px —
+   below that the layout wraps rather than crushing the plot. */
+.chartArea {
+  flex: 1;
+  min-width: 420px;
+}
+
+.summary {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.droppedNote {
+  opacity: 0.6;
+}
+
+/* Makes a control fill the width of the sidebar. */
+.fullWidth {
+  width: 100%;
+}

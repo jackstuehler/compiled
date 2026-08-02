@@ -1,0 +1,29 @@
+.nav {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 24px;
+}
+
+.link {
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 400;
+  color: inherit;
+  text-decoration: none;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.link:hover {
+  border-color: var(--border-strong);
+}
+
+/* Applied in addition to .link, on the screen you're currently viewing.
+   This must stay BELOW .link in the file: both selectors are equally
+   specific, so when they set the same property the later one wins. */
+.active {
+  font-weight: 600;
+  background-color: var(--surface-active);
+  border-color: var(--border-strong);
+}

@@ -1,253 +1,178 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useMemo, useState } from "react";
+import type { ChangeEvent } from "react";
+import FilterButton, {
+  NO_FILTERS,
+  matchesFilters,
+  type FilterState,
+} from "./filters";
+import ui from "./ui.module.css";
+import styles from "./college-table.module.css";
+import {
+  CONTROL,
+  DASH,
+  MEASURES,
+  measure,
+  money,
+  num,
+  pct,
+  place,
+  tokenize,
+  type School,
+} from "@/lib/measures";
 
-export type School = {
-  unitid: number;
-  instnm: string;
-  city: string | null;
-  stabbr: string;
-  control: number;
-  ugds: number | null;
-  stufacr: number | null;
-  adm_rate: string | null;
-  sat_avg: number | null;
-  actcm50: number | null;
-  grad_rate: string | null;
-  npt4: number | null;
-  md_earn_4yr: number | null;
-  earn_mdn_4yr: number | null;
-  grad_debt_mdn: number | null;
-  debt_all_stgp_eval_mdn: number | null;
-};
-
-const DASH = "—";
-
-const CONTROL: Record<number, string> = {
-  1: "Public",
-  2: "Private",
-  3: "For-profit",
-};
-
-const TYPE_KEYS = Object.keys(CONTROL);
-
-function money(v: number | null) {
-  return v == null ? DASH : "$" + v.toLocaleString("en-US");
-}
-function num(v: number | null) {
-  return v == null ? DASH : v.toLocaleString("en-US");
-}
-function pct(v: string | null) {
-  return v == null ? DASH : (Number(v) * 100).toFixed(1) + "%";
-}
-function place(city: string | null, stabbr: string) {
-  return city ? `${city}, ${stabbr}` : stabbr;
-}
-function tokenize(text: string): string[] {
-  return text
-    .toLowerCase()
-    .split(/[^\p{L}\p{N}]+/u)
-    .filter(Boolean);
+/**
+ * True if every word the user typed starts some word in the college name.
+ * "penn eri" matches "Pennsylvania State University - Erie".
+ *
+ * An empty search matches everything: with no terms, the loop never runs and
+ * never finds a reason to say no.
+ */
+function matchesSearch(nameWords: string[], searchTerms: string[]): boolean {
+  for (const term of searchTerms) {
+    const someWordStartsWithTerm = nameWords.some((word) =>
+      word.startsWith(term),
+    );
+    if (!someWordStartsWithTerm) {
+      return false;
+    }
+  }
+  return true;
 }
 
-type SortOption = {
-  key: string;
-  label: string;
-  get: (r: School) => number | string | null;
-};
+/**
+ * Compares two values so .sort() can order them.
+ *
+ * The contract .sort() expects: return a negative number if `a` belongs first,
+ * a positive number if `b` does, and 0 if they tie.
+ *
+ * `direction` is 1 for ascending or -1 for descending — multiplying by it
+ * flips the result, which saves writing the comparison twice.
+ */
+function compareValues(
+  a: number | string | null,
+  b: number | string | null,
+  direction: 1 | -1,
+): number {
+  // Colleges missing this measure always sink to the bottom, whichever way
+  // we're sorting. These three lines ignore `direction` on purpose.
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
 
-const SORT_OPTIONS: SortOption[] = [
-  { key: "instnm", label: "College name", get: (r) => r.instnm },
-  { key: "ugds", label: "Undergrads", get: (r) => r.ugds },
-  { key: "stufacr", label: "Student:faculty", get: (r) => r.stufacr },
-  {
-    key: "adm_rate",
-    label: "Admit rate",
-    get: (r) => (r.adm_rate == null ? null : Number(r.adm_rate)),
-  },
-  { key: "sat_avg", label: "SAT average", get: (r) => r.sat_avg },
-  { key: "actcm50", label: "ACT median", get: (r) => r.actcm50 },
-  {
-    key: "grad_rate",
-    label: "Graduation rate",
-    get: (r) => (r.grad_rate == null ? null : Number(r.grad_rate)),
-  },
-  { key: "npt4", label: "Average cost", get: (r) => r.npt4 },
-  {
-    key: "md_earn_4yr",
-    label: "Salary (all majors)",
-    get: (r) => r.md_earn_4yr,
-  },
-  {
-    key: "earn_mdn_4yr",
-    label: "Salary (this major)",
-    get: (r) => r.earn_mdn_4yr,
-  },
-  {
-    key: "grad_debt_mdn",
-    label: "Debt (all majors)",
-    get: (r) => r.grad_debt_mdn,
-  },
-  {
-    key: "debt_all_stgp_eval_mdn",
-    label: "Debt (this major)",
-    get: (r) => r.debt_all_stgp_eval_mdn,
-  },
-];
+  // Text sorts alphabetically. localeCompare handles capitals and accented
+  // letters properly, which comparing with < and > does not.
+  if (typeof a === "string" && typeof b === "string") {
+    return a.localeCompare(b) * direction;
+  }
 
-const th: CSSProperties = {
-  textAlign: "left",
-  padding: "6px 10px",
-  whiteSpace: "nowrap",
-  position: "sticky",
-  top: 0,
-  background: "var(--background)",
-  boxShadow: "inset 0 -2px 0 #999",
-  zIndex: 2,
-};
-const thNum: CSSProperties = { ...th, textAlign: "right" };
-const thFirst: CSSProperties = {
-  ...th,
-  left: 0,
-  zIndex: 3,
-  boxShadow: "inset -2px 0 0 #8886, inset 0 -2px 0 #999",
-};
-const td: CSSProperties = {
-  padding: "6px 10px",
-  borderBottom: "1px solid #8883",
-  whiteSpace: "nowrap",
-};
-const tdNum: CSSProperties = { ...td, textAlign: "right" };
-const tdFirst: CSSProperties = {
-  ...td,
-  position: "sticky",
-  left: 0,
-  background: "var(--background)",
-  zIndex: 1,
-  boxShadow: "inset -2px 0 0 #8886",
-};
-const fieldStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 4,
-  fontSize: 13,
-};
-const inputStyle: CSSProperties = { padding: 6, fontSize: 15 };
-const buttonStyle: CSSProperties = {
-  padding: "6px 12px",
-  fontSize: 15,
-  cursor: "pointer",
-  background: "var(--background)",
-  color: "inherit",
-  border: "1px solid #8886",
-  borderRadius: 4,
-};
-const dialogStyle: CSSProperties = {
-  border: "1px solid #8886",
-  borderRadius: 8,
-  padding: 20,
-  minWidth: 260,
-  background: "var(--background)",
-  color: "inherit",
-};
+  // Numbers sort by subtraction: if `a` is bigger, the result is positive.
+  return (Number(a) - Number(b)) * direction;
+}
 
 export default function CollegeTable({ rows }: { rows: School[] }) {
   const [sortKey, setSortKey] = useState("earn_mdn_4yr");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [query, setQuery] = useState("");
-  const [state, setState] = useState("");
-  const [types, setTypes] = useState<string[]>(TYPE_KEYS);
+  const [filters, setFilters] = useState<FilterState>(NO_FILTERS);
 
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  // Split every college name into lowercase words once, ahead of time, so
+  // searching doesn't redo that work for every college on every keystroke.
+  // Only rebuilt when a different major is chosen and `rows` changes.
+  const searchIndex = useMemo(() => {
+    return rows.map((school) => ({
+      school: school,
+      words: tokenize(school.instnm),
+    }));
+  }, [rows]);
 
-  function toggleType(v: string) {
-    setTypes((prev) =>
-      prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v],
-    );
+  // The rows actually on screen, after searching, filtering and sorting.
+  // useMemo re-runs this only when one of the values in the list at the bottom
+  // changes — not on every render.
+  const visibleRows = useMemo(() => {
+    const searchTerms = tokenize(query);
+    const sortBy = measure(sortKey);
+    const direction = order === "asc" ? 1 : -1;
+
+    const kept: School[] = [];
+    for (const entry of searchIndex) {
+      if (!matchesFilters(entry.school, filters)) {
+        continue;
+      }
+      if (!matchesSearch(entry.words, searchTerms)) {
+        continue;
+      }
+      kept.push(entry.school);
+    }
+
+    // .sort() rearranges the array it is called on. `kept` is a list we just
+    // built ourselves, so sorting it is safe — sorting `rows` would quietly
+    // reorder data the page above us owns.
+    kept.sort((a, b) => compareValues(sortBy.get(a), sortBy.get(b), direction));
+
+    return kept;
+  }, [searchIndex, sortKey, order, query, filters]);
+
+  function handleQueryChange(event: ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value);
   }
 
-  const activeFilters =
-    (state !== "" ? 1 : 0) + (types.length !== TYPE_KEYS.length ? 1 : 0);
+  function handleSortKeyChange(event: ChangeEvent<HTMLSelectElement>) {
+    setSortKey(event.target.value);
+  }
 
-  const indexed = useMemo(
-    () => rows.map((r) => ({ row: r, words: tokenize(r.instnm) })),
-    [rows],
-  );
+  function toggleOrder() {
+    if (order === "asc") {
+      setOrder("desc");
+    } else {
+      setOrder("asc");
+    }
+  }
 
-  const states = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.stabbr))).sort(),
-    [rows],
-  );
+  const isAscending = order === "asc";
+  const orderArrow = isAscending ? "↑" : "↓";
+  const orderLabel = isAscending ? "Sorted ascending" : "Sorted descending";
+  const orderHint = isAscending
+    ? "Ascending — click for descending"
+    : "Descending — click for ascending";
 
-  const view = useMemo(() => {
-    const opt = SORT_OPTIONS.find((o) => o.key === sortKey) ?? SORT_OPTIONS[0];
-    const terms = tokenize(query);
-
-    const filtered = indexed
-      .filter(({ row, words }) => {
-        if (state !== "" && row.stabbr !== state) return false;
-        if (!types.includes(String(row.control))) return false;
-        return terms.every((t) => words.some((w) => w.startsWith(t)));
-      })
-      .map(({ row }) => row);
-
-    const dir = order === "asc" ? 1 : -1;
-
-    return [...filtered].sort((a, b) => {
-      const av = opt.get(a);
-      const bv = opt.get(b);
-      if (av == null && bv == null) return 0;
-      if (av == null) return 1;
-      if (bv == null) return -1;
-      if (typeof av === "string" && typeof bv === "string") {
-        return av.localeCompare(bv) * dir;
-      }
-      return ((av as number) - (bv as number)) * dir;
-    });
-  }, [indexed, sortKey, order, query, state, types]);
+  let countLabel = `${visibleRows.length.toLocaleString()} colleges`;
+  if (visibleRows.length === 1) {
+    countLabel = "1 college";
+  }
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          gap: 16,
-          alignItems: "flex-end",
-          flexWrap: "wrap",
-          margin: "16px 0",
-        }}
-      >
-        <label style={fieldStyle}>
+      <div className={styles.controls}>
+        <label className={ui.field}>
           Search for college
           <input
-            style={inputStyle}
+            className={ui.input}
             type="search"
             value={query}
             placeholder="e.g. Penn Eri"
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQueryChange}
           />
         </label>
 
-        <button
-          type="button"
-          style={buttonStyle}
-          onClick={() => dialogRef.current?.showModal()}
-        >
-          Filters{activeFilters > 0 ? ` (${activeFilters})` : ""}
-        </button>
+        <FilterButton
+          rows={rows}
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
 
-        <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
-          <label style={fieldStyle}>
+        <div className={styles.sortGroup}>
+          <label className={ui.field}>
             Sort by
             <select
-              style={inputStyle}
+              className={ui.input}
               value={sortKey}
-              onChange={(e) => setSortKey(e.target.value)}
+              onChange={handleSortKeyChange}
             >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.key} value={o.key}>
-                  {o.label}
+              {MEASURES.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -255,129 +180,64 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
 
           <button
             type="button"
-            style={{ ...buttonStyle, lineHeight: 1.4, minWidth: 40 }}
-            onClick={() => setOrder((o) => (o === "asc" ? "desc" : "asc"))}
-            aria-label={
-              order === "asc" ? "Sorted ascending" : "Sorted descending"
-            }
-            title={
-              order === "asc"
-                ? "Ascending — click for descending"
-                : "Descending — click for ascending"
-            }
+            className={`${ui.button} ${styles.orderButton}`}
+            onClick={toggleOrder}
+            aria-label={orderLabel}
+            title={orderHint}
           >
-            {order === "asc" ? "↑" : "↓"}
+            {orderArrow}
           </button>
         </div>
       </div>
 
-      <dialog ref={dialogRef} style={dialogStyle}>
-        <form
-          method="dialog"
-          style={{ display: "flex", flexDirection: "column", gap: 16 }}
-        >
-          <h3 style={{ margin: 0, fontSize: 18 }}>Filters</h3>
+      <p>{countLabel}</p>
 
-          <label style={fieldStyle}>
-            State
-            <select
-              style={inputStyle}
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            >
-              <option value="">All states</option>
-              {states.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
-            <legend style={{ fontSize: 13, padding: 0, marginBottom: 6 }}>
-              Type
-            </legend>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 6,
-                fontSize: 15,
-              }}
-            >
-              {TYPE_KEYS.map((k) => (
-                <label
-                  key={k}
-                  style={{ display: "flex", alignItems: "center", gap: 6 }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={types.includes(k)}
-                    onChange={() => toggleType(k)}
-                  />
-                  {CONTROL[Number(k)]}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <button style={{ ...buttonStyle, alignSelf: "flex-end" }}>
-            Done
-          </button>
-        </form>
-      </dialog>
-
-      <p>
-        {view.length.toLocaleString()} college{view.length === 1 ? "" : "s"}
-      </p>
-
-      <div
-        style={{
-          overflow: "auto",
-          maxHeight: "70vh",
-          border: "1px solid #8883",
-        }}
-      >
-        <table style={{ borderCollapse: "collapse", fontSize: 14 }}>
+      <div className={styles.scrollBox}>
+        <table className={styles.table}>
           <thead>
             <tr>
-              <th style={thFirst}>Rank / College</th>
-              <th style={th}>Location</th>
-              <th style={th}>Type</th>
-              <th style={thNum}>Undergrads</th>
-              <th style={thNum}>Stu:Fac</th>
-              <th style={thNum}>Admit rate</th>
-              <th style={thNum}>SAT avg</th>
-              <th style={thNum}>ACT med</th>
-              <th style={thNum}>Grad rate</th>
-              <th style={thNum}>Avg cost</th>
-              <th style={thNum}>Salary (all)</th>
-              <th style={thNum}>Salary (major)</th>
-              <th style={thNum}>Debt (all)</th>
-              <th style={thNum}>Debt (major)</th>
+              <th className={styles.firstColumn}>Rank / College</th>
+              <th>Location</th>
+              <th>Type</th>
+              <th className={styles.numeric}>Undergrads</th>
+              <th className={styles.numeric}>Stu:Fac</th>
+              <th className={styles.numeric}>Admit rate</th>
+              <th className={styles.numeric}>SAT avg</th>
+              <th className={styles.numeric}>ACT med</th>
+              <th className={styles.numeric}>Grad rate</th>
+              <th className={styles.numeric}>Avg cost</th>
+              <th className={styles.numeric}>Salary (all)</th>
+              <th className={styles.numeric}>Salary (major)</th>
+              <th className={styles.numeric}>Debt (all)</th>
+              <th className={styles.numeric}>Debt (major)</th>
             </tr>
           </thead>
           <tbody>
-            {view.map((s, i) => (
-              <tr key={s.unitid}>
-                <td style={tdFirst}>
-                  <span style={{ opacity: 0.5, marginRight: 8 }}>{i + 1}</span>
-                  {s.instnm}
+            {visibleRows.map((school, index) => (
+              <tr key={school.unitid}>
+                <td className={styles.firstColumn}>
+                  {/* The rank is the row's position in what's on screen right
+                      now, so it renumbers whenever the sort or filters change. */}
+                  <span className={styles.rank}>{index + 1}</span>
+                  {school.instnm}
                 </td>
-                <td style={td}>{place(s.city, s.stabbr)}</td>
-                <td style={td}>{CONTROL[s.control] ?? DASH}</td>
-                <td style={tdNum}>{num(s.ugds)}</td>
-                <td style={tdNum}>{num(s.stufacr)}</td>
-                <td style={tdNum}>{pct(s.adm_rate)}</td>
-                <td style={tdNum}>{num(s.sat_avg)}</td>
-                <td style={tdNum}>{num(s.actcm50)}</td>
-                <td style={tdNum}>{pct(s.grad_rate)}</td>
-                <td style={tdNum}>{money(s.npt4)}</td>
-                <td style={tdNum}>{money(s.md_earn_4yr)}</td>
-                <td style={tdNum}>{money(s.earn_mdn_4yr)}</td>
-                <td style={tdNum}>{money(s.grad_debt_mdn)}</td>
-                <td style={tdNum}>{money(s.debt_all_stgp_eval_mdn)}</td>
+                <td>{place(school.city, school.stabbr)}</td>
+                <td>{CONTROL[school.control] ?? DASH}</td>
+                <td className={styles.numeric}>{num(school.ugds)}</td>
+                <td className={styles.numeric}>{num(school.stufacr)}</td>
+                <td className={styles.numeric}>{pct(school.adm_rate)}</td>
+                <td className={styles.numeric}>{num(school.sat_avg)}</td>
+                <td className={styles.numeric}>{num(school.actcm50)}</td>
+                <td className={styles.numeric}>{pct(school.grad_rate)}</td>
+                <td className={styles.numeric}>{money(school.npt4)}</td>
+                <td className={styles.numeric}>{money(school.md_earn_4yr)}</td>
+                <td className={styles.numeric}>{money(school.earn_mdn_4yr)}</td>
+                <td className={styles.numeric}>
+                  {money(school.grad_debt_mdn)}
+                </td>
+                <td className={styles.numeric}>
+                  {money(school.debt_all_stgp_eval_mdn)}
+                </td>
               </tr>
             ))}
           </tbody>

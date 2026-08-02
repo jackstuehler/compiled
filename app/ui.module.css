@@ -1,0 +1,43 @@
+/* Styles for controls that appear on more than one screen.
+
+   Import:   import ui from "./ui.module.css";
+   Use:      className={ui.button}
+   Combine:  className={`${ui.button} ${styles.wide}`}  */
+
+/* A small caption stacked above its input — "Sort by" over a <select>. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* Text inputs and selects, usually inside a .field. */
+.input {
+  padding: 6px;
+  font-size: 15px;
+}
+
+.button {
+  padding: 6px 12px;
+  font-size: 15px;
+  cursor: pointer;
+  color: inherit;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.button:hover {
+  border-color: var(--border-strong);
+}
+
+/* The <dialog> popup that holds the filters. */
+.dialog {
+  padding: 20px;
+  min-width: 260px;
+  color: inherit;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
