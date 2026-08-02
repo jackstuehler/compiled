@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import Nav from "./nav";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -24,7 +26,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <main style={{ padding: 40, fontFamily: "system-ui" }}>
+          <h1>CompilEd</h1>
+          <Suspense
+            fallback={<nav style={{ margin: "16px 0 24px", height: 39 }} />}
+          >
+            <Nav />
+          </Suspense>
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

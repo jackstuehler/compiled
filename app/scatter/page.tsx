@@ -1,14 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import { pool } from "@/lib/db";
-import MajorPicker, { Major } from "./major-picker";
-import CollegeTable, { School } from "./college-table";
+import MajorPicker, { Major } from "../major-picker";
 
 type MajorRow = RowDataPacket & Major;
-type SchoolRow = RowDataPacket & School;
 
 const DEFAULT_MAJOR = "1107"; // Computer Science
 
-export default async function Home({
+export default async function Scatter({
   searchParams,
 }: {
   searchParams: Promise<{ major?: string }>;
@@ -27,24 +25,10 @@ export default async function Home({
       ORDER BY m.cip_desc`,
   );
 
-  const [schoolRows] = await pool.query<SchoolRow[]>(
-    `SELECT i.unitid, i.instnm, i.city, i.stabbr, i.control, i.ugds, i.stufacr,
-            i.adm_rate, i.sat_avg, i.actcm50, i.grad_rate, i.npt4,
-            i.md_earn_4yr, f.earn_mdn_4yr,
-            i.grad_debt_mdn, f.debt_all_stgp_eval_mdn
-       FROM fos_bachelors f
-       JOIN institutions i ON i.unitid = f.unitid
-      WHERE f.cip_code = ? AND f.earn_mdn_4yr IS NOT NULL
-      ORDER BY f.earn_mdn_4yr DESC`,
-    [selected],
-  );
-
   const majors: Major[] = majorRows.map(({ cip_code, cip_desc }) => ({
     cip_code,
     cip_desc,
   }));
-
-  const schools: School[] = schoolRows.map((r) => ({ ...r }));
 
   const current = majors.find((m) => m.cip_code === selected);
 
@@ -52,7 +36,9 @@ export default async function Home({
     <>
       <MajorPicker majors={majors} selected={selected} />
       <h2>{current?.cip_desc ?? "Unknown major"}</h2>
-      <CollegeTable rows={schools} />
+      <p style={{ opacity: 0.6, fontSize: 15 }}>
+        The scatterplot will go here.
+      </p>
     </>
   );
 }
