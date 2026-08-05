@@ -1,5 +1,5 @@
 .select {
-  width: 100%;
+  width: min(360px, 100%);
   height: 36px;
   padding: 0 10px;
   font: inherit;

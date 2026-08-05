@@ -151,7 +151,7 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
             className={ui.input}
             type="search"
             value={query}
-            placeholder="e.g. Penn Eri"
+            placeholder="e.g. Tufts University"
             onChange={handleQueryChange}
           />
         </label>
@@ -190,7 +190,7 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
         </div>
       </div>
 
-      <p>{countLabel}</p>
+      <p className={styles.count}>{countLabel}</p>
 
       <div className={styles.scrollBox}>
         <table className={styles.table}>
