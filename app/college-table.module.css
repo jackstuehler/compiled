@@ -1,33 +1,41 @@
+.tableSection {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
 /* ---------- the controls above the table ---------- */
 
 .controls {
   display: flex;
-  gap: 16px;
+  gap: var(--space-3);
   align-items: flex-end;
   flex-wrap: wrap;
-  margin: 16px 0;
+  margin-bottom: var(--space-3);
 }
 
 /* Keeps the "Sort by" menu and its direction button side by side. */
 .sortGroup {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   align-items: flex-end;
 }
 
 .orderButton {
-  line-height: 1.4;
-  min-width: 40px;
+  min-width: 36px;
+  padding: 0;
+  line-height: 1;
 }
 
 /* ---------- the table ---------- */
 
-/* The box that scrolls. Both scrollbars belong to this element, and that is
-   exactly what lets the header row and first column stick: a sticky cell
-   sticks to its nearest scrolling ancestor, which is this. */
 .scrollBox {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
   overflow: auto;
-  max-height: 70vh;
   border: 1px solid var(--border-subtle);
 }
 
@@ -48,9 +56,11 @@
   position: sticky;
   top: 0;
   z-index: 2;
+
   /* A sticky cell needs an opaque background, or the rows sliding underneath
      show through it. */
   background-color: var(--background);
+
   /* This is a bottom border in everything but name. A real border-bottom
      scrolls out of view here, because border-collapse hands ownership of the
      border to the table rather than the cell. An inset box-shadow is painted
@@ -78,8 +88,7 @@
 }
 
 /* Stacking order, lowest to highest: ordinary cells (no z-index), sticky body
-   cells (1), the header row (2), and the top-left corner cell (3), which has
-   to sit above both the row it's in and the column it's in. */
+   cells (1), the header row (2), and the top-left corner cell (3). */
 .table td.firstColumn {
   z-index: 1;
   box-shadow: inset -2px 0 0 var(--border);
@@ -95,5 +104,5 @@
 /* The faded position number before each college name. */
 .rank {
   opacity: 0.5;
-  margin-right: 8px;
+  margin-right: var(--space-2);
 }

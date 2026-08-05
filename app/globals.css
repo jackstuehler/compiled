@@ -2,33 +2,43 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Borders and fills.
+  /* Borders and fills. */
 
-     These are grays with an alpha channel. In a 4-digit hex like #8886, the
-     first three digits are the color (#888888, a mid gray) and the fourth is
-     opacity â€” 6 out of f, so about 40% opaque.
+  --background: #ffffff;
+  --foreground: #171717;
+  --control-background: #ffffff;
+  --control-border: #c9c9c9;
+  --control-border-hover: #8f8f8f;
+  --border-subtle: #dddddd;
+  --border-heavy: #999999;
+  --point-color: #4a7fd6;
+  --radius: 6px;
+  --radius-lg: 8px;
 
-     Because they're partly transparent, they blend with whatever is behind
-     them: they look like a light gray on the white page and a dark gray in
-     dark mode. That's why they don't need separate values in the dark-mode
-     block below, the way --background and --foreground do. */
-  --border: #8886; /* normal border: buttons, inputs, table outline */
-  --border-strong: #8889; /* border on something selected or hovered */
-  --border-subtle: #8883; /* quiet dividers, like table row separators */
-  --border-heavy: #999; /* the strong rule under the table header */
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
 
-  --point-color: #4a7fd6; /* the dots on the scatterplot */
-
-  --surface-active: #8882; /* fill behind a selected control */
-
-  --radius: 6px; /* corner rounding, so every control matches */
-  --radius-lg: 8px; /* larger rounding, for panels like the filter dialog */
+  /* Layout */
+  --page-max-width: 1700px;
+  --page-padding-x: 40px;
+  --page-padding-y: 24px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --control-background: #171717;
+    --control-border: #444444;
+    --control-border-hover: #777777;
+    --border-subtle: #292929;
+    --border-heavy: #888888;
   }
 }
 

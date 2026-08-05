@@ -8,28 +8,40 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
+  gap: var(--space-1);
+  font-size: 12px;
 }
 
 /* Text inputs and selects, usually inside a .field. */
 .input {
-  padding: 6px;
-  font-size: 15px;
-}
-
-.button {
-  padding: 6px 12px;
-  font-size: 15px;
-  cursor: pointer;
+  height: 36px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 14px;
   color: inherit;
-  background-color: var(--background);
-  border: 1px solid var(--border);
+  background-color: var(--control-background);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
 }
 
+.button {
+  height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+  cursor: pointer;
+  background-color: var(--control-background);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+}
+
+.input:hover,
 .button:hover {
-  border-color: var(--border-strong);
+  border-color: var(--control-border-hover);
 }
 
 /* The <dialog> popup that holds the filters. */
