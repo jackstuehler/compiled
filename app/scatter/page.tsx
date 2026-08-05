@@ -13,7 +13,6 @@ export default async function Scatter({
 
   return (
     <>
-      <h2>{majorName}</h2>
       <ScatterPlot rows={schools} majors={majors} selected={selected} />
     </>
   );
