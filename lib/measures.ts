@@ -190,13 +190,13 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "stufacr",
-    label: "Student:faculty",
+    label: "Stu:Fac",
     format: "number",
     get: (school) => school.stufacr,
   },
   {
     key: "adm_rate",
-    label: "Admit rate",
+    label: "Acc. Rate",
     format: "percent",
     // Arrives from MySQL as a string, so convert before anyone sorts on it.
     get: (school) => {
@@ -208,19 +208,19 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "sat_avg",
-    label: "SAT average",
+    label: "Avg. SAT",
     format: "number",
     get: (school) => school.sat_avg,
   },
   {
     key: "actcm50",
-    label: "ACT median",
+    label: "Mdn. ACT",
     format: "number",
     get: (school) => school.actcm50,
   },
   {
     key: "grad_rate",
-    label: "Graduation rate",
+    label: "Grad Rate",
     format: "percent",
     get: (school) => {
       if (school.grad_rate === null) {
@@ -231,31 +231,31 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "npt4",
-    label: "Average cost",
+    label: "Net Cost",
     format: "money",
     get: (school) => school.npt4,
   },
   {
     key: "md_earn_4yr",
-    label: "Salary (all majors)",
+    label: "Mdn. Salary",
     format: "money",
     get: (school) => school.md_earn_4yr,
   },
   {
     key: "earn_mdn_4yr",
-    label: "Salary (this major)",
+    label: "Major Salary",
     format: "money",
     get: (school) => school.earn_mdn_4yr,
   },
   {
     key: "grad_debt_mdn",
-    label: "Debt (all majors)",
+    label: "Mdn. Debt",
     format: "money",
     get: (school) => school.grad_debt_mdn,
   },
   {
     key: "debt_all_stgp_eval_mdn",
-    label: "Debt (this major)",
+    label: "Major Debt",
     format: "money",
     get: (school) => school.debt_all_stgp_eval_mdn,
   },

@@ -196,20 +196,20 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.firstColumn}>Rank / College</th>
+              <th className={styles.firstColumn}>College</th>
               <th>Location</th>
               <th>Type</th>
               <th className={styles.numeric}>Undergrads</th>
               <th className={styles.numeric}>Stu:Fac</th>
-              <th className={styles.numeric}>Admit rate</th>
-              <th className={styles.numeric}>SAT avg</th>
-              <th className={styles.numeric}>ACT med</th>
-              <th className={styles.numeric}>Grad rate</th>
-              <th className={styles.numeric}>Avg cost</th>
-              <th className={styles.numeric}>Salary (all)</th>
-              <th className={styles.numeric}>Salary (major)</th>
-              <th className={styles.numeric}>Debt (all)</th>
-              <th className={styles.numeric}>Debt (major)</th>
+              <th className={styles.numeric}>Acc. Rate</th>
+              <th className={styles.numeric}>Avg. SAT</th>
+              <th className={styles.numeric}>Mdn. ACT</th>
+              <th className={styles.numeric}>Grad Rate</th>
+              <th className={styles.numeric}>Net Cost</th>
+              <th className={styles.numeric}>Mdn. Salary</th>
+              <th className={styles.numeric}>Major Salary</th>
+              <th className={styles.numeric}>Mdn. Debt</th>
+              <th className={styles.numeric}>Major Debt</th>
             </tr>
           </thead>
           <tbody>
