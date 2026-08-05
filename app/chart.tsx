@@ -13,7 +13,7 @@ export type Point = {
 
 // The chart's own coordinate system. The SVG is scaled to fit whatever space
 // it's given, so these behave like proportions rather than screen pixels.
-const WIDTH = 760;
+const WIDTH = 1000;
 const HEIGHT = 540;
 
 // Room around the plot area for the tick labels and axis titles. The left side
@@ -211,6 +211,7 @@ export default function Chart({
   return (
     <svg
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      preserveAspectRatio="xMidYMin meet"
       className={styles.chart}
       role="img"
       aria-label={`${yLabel} plotted against ${xLabel}, ${points.length} colleges`}

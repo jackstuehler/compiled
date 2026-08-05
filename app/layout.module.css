@@ -39,7 +39,7 @@
   height: 39px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .page {
     height: auto;
     min-height: 100dvh;
