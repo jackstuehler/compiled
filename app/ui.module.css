@@ -46,10 +46,15 @@
 
 /* The <dialog> popup that holds the filters. */
 .dialog {
-  padding: 20px;
-  min-width: 260px;
+  padding: var(--space-5);
+  min-width: 280px;
   color: inherit;
   background-color: var(--background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px #0008;
+}
+
+.dialog::backdrop {
+  background-color: #0008;
 }

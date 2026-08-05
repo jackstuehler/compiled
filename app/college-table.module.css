@@ -28,6 +28,11 @@
   line-height: 1;
 }
 
+.count {
+  margin-bottom: var(--space-2); /* 12px */
+  font-size: 13px;
+}
+
 /* ---------- the table ---------- */
 
 .scrollBox {
