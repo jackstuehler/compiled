@@ -19,15 +19,23 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <main className={styles.page}>
-          <h1>CompilEd</h1>
+          <header className={styles.header}>
+            <h1 className={styles.brand}>Compiled.</h1>
 
-          {/* Nav reads the query string with useSearchParams, and that isn't
-              known until a request actually arrives. React requires a Suspense
-              boundary around anything that does this, so it can render the rest
-              of the page immediately and fill in this hole afterwards. */}
-          <Suspense fallback={<div className={styles.navPlaceholder} />}>
-            <Nav />
-          </Suspense>
+            <div className={styles.navArea}>
+              {/* Nav reads the query string with useSearchParams, and that isn't
+                  known until a request actually arrives. React requires a Suspense
+                  boundary around anything that does this, so it can render the rest
+                  of the page immediately and fill in this space afterwards. */}
+              <Suspense fallback={<div className={styles.navPlaceholder} />}>
+                <Nav />
+              </Suspense>
+            </div>
+
+            {/* This balances the logo on the left so the navigation remains
+                centered relative to the full page. It can hold a theme button later. */}
+            <div className={styles.headerRight} />
+          </header>
 
           {children}
         </main>

@@ -143,10 +143,10 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
   }
 
   return (
-    <>
+    <div className={styles.tableSection}>
       <div className={styles.controls}>
         <label className={ui.field}>
-          Search for college
+          Search
           <input
             className={ui.input}
             type="search"
@@ -243,6 +243,6 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 }
