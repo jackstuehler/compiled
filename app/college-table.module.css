@@ -1,3 +1,5 @@
+/* ---------- Page section ---------- */
+
 .tableSection {
   display: flex;
   flex: 1;
@@ -5,23 +7,23 @@
   flex-direction: column;
 }
 
-/* ---------- controls above the table ---------- */
+/* ---------- Controls ---------- */
 
 .controls {
   display: flex;
-  gap: var(--space-3);
   align-items: flex-end;
   flex-wrap: wrap;
+  gap: var(--space-3);
   margin-bottom: var(--space-3);
 }
 
-/* Keeps the "Sort by" menu and direction button side by side. */
 .sortGroup {
   display: flex;
-  gap: var(--space-2);
   align-items: flex-end;
+  gap: var(--space-2);
 }
 
+/* Matches the shared 36px control height. */
 .orderButton {
   min-width: 36px;
   padding: 0;
@@ -33,15 +35,17 @@
   font-size: 13px;
 }
 
-/* ---------- table ---------- */
+/* ---------- Table ---------- */
 
+/* The table scrolls inside this box while the controls remain visible. */
 .scrollBox {
   flex: 1;
   min-height: 0;
   width: 100%;
-  max-width: 100%;
   overflow: auto;
+
   border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
 }
 
 .table {
@@ -49,7 +53,6 @@
   font-size: 14px;
 }
 
-/* Applies to every header and body cell. */
 .table th,
 .table td {
   padding: 6px 10px;
@@ -62,10 +65,10 @@
   z-index: 2;
 
   text-align: left;
-  background-color: var(--background);
+  background-color: var(--surface);
 
-  /* A subtle header divider is easier to maintain across sticky cells than
-     the previous heavy 2px rule. */
+  /* A shadow stays attached to sticky cells more reliably than a normal
+     collapsed table border. */
   box-shadow: inset 0 -1px 0 var(--border-subtle);
 }
 
@@ -73,36 +76,44 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Right-aligns numeric columns so digits line up by place value. */
+.table tbody tr:hover td {
+  background-color: var(--surface-hover);
+}
+
 .numeric {
   text-align: right;
 }
 
-/* ---------- sticky first column ---------- */
+/* ---------- Sticky College column ---------- */
 
 .table th.firstColumn,
 .table td.firstColumn {
   position: sticky;
   left: 0;
-  background-color: var(--background);
 }
 
-/* Stacking order:
-   ordinary cells < sticky body cells < header cells < top-left corner. */
+/* Sticky cells need opaque backgrounds so scrolling cells do not show
+   underneath them. */
 .table td.firstColumn {
   z-index: 1;
+  background-color: var(--background);
   box-shadow: inset -1px 0 0 var(--border-subtle);
 }
 
 .table th.firstColumn {
   z-index: 3;
+  background-color: var(--surface);
   box-shadow:
     inset -1px 0 0 var(--border-subtle),
     inset 0 -1px 0 var(--border-subtle);
 }
 
-/* The faded position number before each college name. */
+/* The hover background must also apply to the sticky College cell. */
+.table tbody tr:hover td.firstColumn {
+  background-color: var(--surface-hover);
+}
+
 .rank {
   margin-right: var(--space-2);
-  opacity: 0.5;
+  color: var(--text-muted);
 }

@@ -1,17 +1,33 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core surfaces */
+  --background: #111111;
+  --surface: #171717;
+  --surface-hover: #1d1d1d;
+  --surface-raised: #1a1a1a;
 
-  /* Borders and fills. */
+  /* Text */
+  --foreground: #f2f2f2;
+  --text-secondary: #b8b8b8;
+  --text-muted: #7f7f7f;
 
-  --background: #ffffff;
-  --foreground: #171717;
-  --control-background: #ffffff;
-  --control-border: #c9c9c9;
-  --control-border-hover: #8f8f8f;
-  --border-subtle: #dddddd;
-  --border-heavy: #999999;
-  --point-color: #4a7fd6;
+  /* Controls */
+  --control-background: var(--surface);
+  --control-border: #3a3a3a;
+  --control-border-hover: #606060;
+
+  /* Dividers */
+  --border-subtle: #292929;
+  --border-heavy: #565656;
+
+  /* Brand/accent */
+  --accent: #4f86e8;
+  --accent-hover: #6b9af0;
+  --accent-soft: #4f86e826;
+
+  /* Chart */
+  --point-color: var(--accent);
+
+  /* Shape */
   --radius: 6px;
   --radius-lg: 8px;
 
@@ -28,18 +44,6 @@
   --page-max-width: 1700px;
   --page-padding-x: 40px;
   --page-padding-y: 24px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --control-background: #171717;
-    --control-border: #444444;
-    --control-border-hover: #777777;
-    --border-subtle: #292929;
-    --border-heavy: #888888;
-  }
 }
 
 html {
@@ -72,10 +76,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

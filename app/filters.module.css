@@ -1,39 +1,38 @@
+/* Layout inside the filter dialog. */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .title {
   font-size: 18px;
 }
 
-/* A <fieldset> groups related controls together. Browsers draw a border
-   around it by default, which we don't want here. */
+/* Remove the browser's default fieldset border. */
 .fieldset {
   border: none;
 }
 
-/* A <legend> is the fieldset's caption — the word "Type". */
 .legend {
+  margin-bottom: var(--space-2);
   font-size: 13px;
-  margin-bottom: 6px;
 }
 
 .checkboxList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
   font-size: 15px;
 }
 
 .checkboxLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
-/* Pushes the Done button to the right edge of the form. */
+/* Right-align the dialog's primary action. */
 .doneButton {
   align-self: flex-end;
 }

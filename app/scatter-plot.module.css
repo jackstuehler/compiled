@@ -1,3 +1,7 @@
+/* ---------- Desktop layout ---------- */
+
+/* Sidebar + chart. The chart column is allowed to shrink below its contents,
+   preventing wide SVGs from forcing horizontal scrolling. */
 .layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -16,7 +20,7 @@
   min-width: 0;
 }
 
-/* The chart takes all remaining width and height. */
+/* The chart fills the remaining space beside the sidebar. */
 .chartArea {
   display: flex;
   flex-direction: column;
@@ -32,28 +36,31 @@
 }
 
 .droppedNote {
-  opacity: 0.6;
+  color: var(--text-muted);
 }
 
-/* Makes a control fill the width of the sidebar. */
+/* Lets shared controls stretch across the sidebar. */
 .fullWidth {
   width: 100%;
 }
+
+/* ---------- Mobile layout ---------- */
 
 @media (max-width: 900px) {
   .layout {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+
     overflow: visible;
   }
 
-  .sidebar {
+  .sidebar,
+  .chartArea {
     width: 100%;
   }
 
   .chartArea {
-    width: 100%;
     min-height: 0;
   }
 }
