@@ -178,7 +178,7 @@ export type Measure = {
 export const MEASURES: Measure[] = [
   {
     key: "instnm",
-    label: "College name",
+    label: "Name",
     format: "text",
     get: (school) => school.instnm,
   },

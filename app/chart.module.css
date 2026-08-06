@@ -1,58 +1,58 @@
+/* The SVG chart fills the available space on desktop. */
 .chart {
   flex: 1;
-  width: 100%;
   min-height: 0;
+  width: 100%;
   height: 100%;
+
   font-family: system-ui;
   font-size: 12px;
 }
 
-/* Faint lines running across the plot at each labelled tick. */
+/* ---------- Axes ---------- */
+
 .gridLine {
   stroke: var(--border-subtle);
 }
 
-/* The two solid lines along the left and bottom edges of the plot. */
 .axisLine {
-  stroke: var(--border-strong);
+  stroke: var(--control-border);
 }
 
-/* The numbers running along each axis. */
 .tickLabel {
-  fill: currentColor;
-  opacity: 0.7;
+  fill: var(--text-secondary);
 }
 
-/* The measure name, e.g. "Average SAT". */
 .axisTitle {
   fill: currentColor;
   font-size: 14px;
 }
 
-/* One college. Semi-transparent so overlapping colleges read as a darker
-   patch rather than hiding each other. */
+/* ---------- Data ---------- */
+
+/* Semi-transparent points make dense regions appear darker. */
 .point {
   fill: var(--point-color);
   fill-opacity: 0.5;
 }
 
-/* The college under the pointer, drawn again on top of the rest. */
+/* Draw the hovered college on top without interfering with pointer events. */
 .highlightedPoint {
   fill: var(--point-color);
-  stroke: currentColor;
+  stroke: var(--foreground);
   stroke-width: 1.5;
-  /* Ignore the mouse, so this circle can't steal the hover from the real dot
-     underneath it and cause a flicker. */
   pointer-events: none;
 }
+
+/* ---------- Tooltip ---------- */
 
 .tooltip {
   pointer-events: none;
 }
 
 .tooltipBox {
-  fill: var(--background);
-  stroke: var(--border-strong);
+  fill: var(--surface-raised);
+  stroke: var(--control-border);
 }
 
 .tooltipText {
@@ -63,12 +63,16 @@
   font-weight: 600;
 }
 
+/* ---------- Empty state ---------- */
+
 .emptyMessage {
-  opacity: 0.6;
-  padding: 40px;
+  padding: var(--space-7);
   text-align: center;
+  color: var(--text-muted);
 }
 
+/* Preserve the chart's aspect ratio once it becomes too narrow to fill the
+   viewport vertically. */
 @media (max-width: 900px) {
   .chart {
     flex: none;
