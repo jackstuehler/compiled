@@ -1,82 +1,155 @@
 /* The SVG chart fills the available space on desktop. */
 .chart {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  height: 100%;
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+	height: 100%;
 
-  font-family: system-ui;
-  font-size: 12px;
+	font-family: system-ui;
+	font-size: 12px;
+
+	/* Dragging a zoom rectangle is a click-and-drag, which is also the gesture
+     for selecting text. Without this, dragging across the chart highlights the
+     tick labels. */
+	user-select: none;
+	-webkit-user-select: none;
+
+	/* A crosshair says "you can draw a box here" without any explanatory text. */
+	cursor: crosshair;
 }
 
 /* ---------- Axes ---------- */
 
 .gridLine {
-  stroke: var(--border-subtle);
+	stroke: var(--border-subtle);
 }
 
 .axisLine {
-  stroke: var(--control-border);
+	stroke: var(--control-border);
 }
 
 .tickLabel {
-  fill: var(--text-secondary);
+	fill: var(--text-secondary);
 }
 
 .axisTitle {
-  fill: currentColor;
-  font-size: 14px;
+	fill: currentColor;
+	font-size: 14px;
 }
 
 /* ---------- Data ---------- */
 
 /* Semi-transparent points make dense regions appear darker. */
 .point {
-  fill: var(--point-color);
-  fill-opacity: 0.5;
+	fill: var(--point-color);
+	fill-opacity: 0.5;
+}
+
+/* The rest of the field while a search is running. Faint enough that the
+   matches jump out, solid enough that the shape of the data is still readable —
+   the whole reason for dimming rather than hiding. */
+.fadedPoint {
+	fill-opacity: 0.1;
+}
+
+/* A college matching the search. Colour carries the whole message here — no
+   name label — so it has to be a different colour rather than a stronger
+   version of the same one. --foreground is the one colour in the token set
+   guaranteed to contrast with both the background and the dots, in light mode
+   and dark mode alike, without introducing a hue that has to be maintained
+   twice. */
+.highlightedPoint {
+	fill: var(--foreground);
+	fill-opacity: 1;
 }
 
 /* Draw the hovered college on top without interfering with pointer events. */
-.highlightedPoint {
-  fill: var(--point-color);
-  stroke: var(--foreground);
-  stroke-width: 1.5;
-  pointer-events: none;
+.hoveredPoint {
+	fill: var(--point-color);
+	stroke: var(--foreground);
+	stroke-width: 1.5;
+	pointer-events: none;
+}
+
+/* Hovering a match must not un-highlight it. This marker is drawn over the top
+   of the dot, so when the dot underneath is a match it has to carry the same
+   fill. */
+.hoveredHighlightedPoint {
+	fill: var(--foreground);
+
+	/* A foreground stroke on a foreground fill would just be a bigger blob, so
+     the ring flips to the background colour instead — it reads as a halo
+     separating the hovered match from anything sitting behind it. */
+	stroke: var(--background);
+}
+
+/* ---------- Zoom ---------- */
+
+/* The rectangle being dragged. Faint enough to read the dots through, dashed so
+   it doesn't read as a drawn shape. It must not swallow pointer events, or the
+   drag would end the moment the rectangle grew under the cursor. */
+.selectionBox {
+	fill: var(--point-color);
+	fill-opacity: 0.12;
+	stroke: var(--control-border);
+	stroke-dasharray: 4 3;
+	pointer-events: none;
+}
+
+.resetControl {
+	cursor: pointer;
+}
+
+.resetBox {
+	fill: var(--surface-raised);
+	stroke: var(--control-border);
+}
+
+.resetLabel {
+	fill: currentColor;
+
+	/* The label sits on top of the box, so clicks would land on the text rather
+     than the group unless the text steps out of the way. */
+	pointer-events: none;
 }
 
 /* ---------- Tooltip ---------- */
 
 .tooltip {
-  pointer-events: none;
+	pointer-events: none;
 }
 
 .tooltipBox {
-  fill: var(--surface-raised);
-  stroke: var(--control-border);
+	fill: var(--surface-raised);
+	stroke: var(--control-border);
 }
 
 .tooltipText {
-  fill: currentColor;
+	fill: currentColor;
 }
 
 .tooltipTitle {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 /* ---------- Empty state ---------- */
 
 .emptyMessage {
-  padding: var(--space-7);
-  text-align: center;
-  color: var(--text-muted);
+	padding: var(--space-7);
+	text-align: center;
+	color: var(--text-muted);
 }
 
 /* Preserve the chart's aspect ratio once it becomes too narrow to fill the
    viewport vertically. */
 @media (max-width: 900px) {
-  .chart {
-    flex: none;
-    height: auto;
-    aspect-ratio: 1000 / 540;
-  }
+	.chart {
+		flex: none;
+		height: auto;
+		aspect-ratio: 1000 / 540;
+
+		/* Zoom is mouse-and-pen only (see chart.tsx), so on a touch screen the
+       crosshair would promise an interaction that isn't there. */
+		cursor: default;
+	}
 }
