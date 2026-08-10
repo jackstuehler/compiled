@@ -19,7 +19,7 @@ export type School = {
   actcm50: number | null;
   npt4: number | null; // average net price
 
-  md_earn_4yr: number | null; // median salary across all majors at this college
+  md_earn_4yr: number | null; // median salary across all majors at the college
   earn_mdn_4yr: number | null; // median salary for the selected major
   grad_debt_mdn: number | null; // median debt across all majors
   debt_all_stgp_eval_mdn: number | null; // median debt for the selected major
