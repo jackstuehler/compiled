@@ -12,16 +12,13 @@ export default function MajorPicker({
 }: {
   majors: Major[];
   selected: string;
-  /* Lets callers replace the default width when embedding the picker in a
-     different layout. */
   className?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
 
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
-    // The selected major lives in the URL so it persists across pages and can
-    // be bookmarked or shared.
+    // Keep the selected major in the URL so it persists across pages.
     router.push(`${pathname}?major=${encodeURIComponent(event.target.value)}`);
   }
 

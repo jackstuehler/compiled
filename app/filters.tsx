@@ -6,19 +6,16 @@ import { CONTROL, TYPE_CODES, type School } from "@/lib/measures";
 import ui from "./ui.module.css";
 import styles from "./filters.module.css";
 
-/** Filters currently applied to the college list. */
 export type FilterState = {
   state: string; // two-letter state code, or "" for all states
   types: number[]; // 1 public, 2 private nonprofit, 3 private for-profit
 };
 
-/** No state restriction and every school type included. */
 export const NO_FILTERS: FilterState = {
   state: "",
   types: TYPE_CODES,
 };
 
-/** Number of filter categories currently narrowing the results. */
 export function activeFilterCount(filters: FilterState): number {
   let count = 0;
 
@@ -33,7 +30,6 @@ export function activeFilterCount(filters: FilterState): number {
   return count;
 }
 
-/** Whether a college matches the current filters. */
 export function matchesFilters(school: School, filters: FilterState): boolean {
   if (filters.state !== "" && school.stabbr !== filters.state) {
     return false;
@@ -54,7 +50,7 @@ export default function FilterButton({
   // Lets us call the dialog element's built-in showModal() method.
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Build the state menu from the colleges currently available.
+  // Only show states represented in the current college dataset.
   const states = useMemo(() => {
     const seen = new Set<string>();
 

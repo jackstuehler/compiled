@@ -2,25 +2,15 @@ import { RowDataPacket } from "mysql2";
 import { pool } from "@/lib/db";
 import type { Major, School } from "@/lib/measures";
 
-// The mysql2 driver requires the type it returns to extend RowDataPacket.
-// These two lines combine our own row shapes with what the driver expects.
+// mysql2 query results must extend RowDataPacket.
 type MajorRow = RowDataPacket & Major;
 type SchoolRow = RowDataPacket & School;
 
 /** Computer Science — used when the URL doesn't name a major. */
 export const DEFAULT_MAJOR = "1107";
 
-/**
- * Everything either screen needs, for one major.
- *
- * This lives here rather than in the page files because both pages need
- * exactly the same data. A query copied into two places is a query that will
- * eventually get fixed in only one of them.
- */
+/** Loads the major list and schools for the selected major. */
 export async function loadMajorData(cipCode: string) {
-  // The two queries don't depend on each other, so start them both and then
-  // wait for both. Run one after the other and the page waits for the sum of
-  // the two; run them together and it waits for the slower one.
   const [majors, schools] = await Promise.all([
     loadMajors(),
     loadSchools(cipCode),
@@ -61,16 +51,11 @@ async function loadSchools(cipCode: string): Promise<School[]> {
        JOIN institutions i ON i.unitid = f.unitid
       WHERE f.cip_code = ? AND f.earn_mdn_4yr IS NOT NULL
       ORDER BY f.earn_mdn_4yr DESC`,
-    // The "?" above is a placeholder. Handing the value over separately means
-    // MySQL treats it strictly as data, so a crafted major code can never be
-    // executed as SQL. Never build a query by gluing strings together.
+    // Parameterize the CIP code instead of interpolating it into SQL.
     [cipCode],
   );
 
-  // Rows from the driver carry hidden extras beyond the fields we asked for.
-  // Spreading each into a fresh object produces a plain, ordinary object —
-  // which is what Next requires for anything a server component hands to a
-  // client component, because it has to be converted to text to reach the
-  // browser and only plain data survives that trip.
+  // Convert mysql2 rows to plain objects before passing them to client
+  // components.
   return rows.map((row) => ({ ...row }));
 }
