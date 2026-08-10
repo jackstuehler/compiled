@@ -11,9 +11,5 @@ export default async function Scatter({
 
   const { majors, schools } = await loadMajorData(selected);
 
-  return (
-    <>
-      <ScatterPlot rows={schools} majors={majors} selected={selected} />
-    </>
-  );
+  return <ScatterPlot rows={schools} majors={majors} selected={selected} />;
 }
