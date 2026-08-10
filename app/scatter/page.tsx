@@ -9,7 +9,7 @@ export default async function Scatter({
   const { major } = await searchParams;
   const selected = major ?? DEFAULT_MAJOR;
 
-  const { majors, schools, majorName } = await loadMajorData(selected);
+  const { majors, schools } = await loadMajorData(selected);
 
   return (
     <>
