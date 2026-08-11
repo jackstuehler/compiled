@@ -21,7 +21,7 @@ export default function RootLayout({
         <main className={styles.page}>
           <header className={styles.header}>
             <h1 className={styles.brand}>
-              Compil<span className={styles.brandAccent}>ed</span>.
+              Compil<span className={styles.brandAccent}>ed.</span>
             </h1>
 
             <div className={styles.navArea}>

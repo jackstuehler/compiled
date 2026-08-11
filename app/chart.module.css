@@ -39,7 +39,7 @@
 
 /* Dim non-matching points without hiding the overall data distribution. */
 .fadedPoint {
-  fill-opacity: 0.1;
+  fill-opacity: 0.2;
 }
 
 .highlightedPoint {
