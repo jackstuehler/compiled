@@ -18,7 +18,6 @@
   gap: var(--space-4);
 
   min-width: 0;
-  padding-inline: 4px;
 }
 
 /* The chart fills the remaining space beside the sidebar. */

@@ -1,9 +1,9 @@
 :root {
   /* Core surfaces */
-  --background: #090909;
-  --surface: #101010;
-  --surface-hover: #171717;
-  --surface-raised: #141414;
+  --background: #090a0c;
+  --surface: #0e0f13;
+  --surface-hover: #15171d;
+  --surface-raised: #121318;
 
   /* Text */
   --foreground: #f2f2f2;
@@ -12,12 +12,12 @@
 
   /* Controls */
   --control-background: var(--surface);
-  --control-border: #303030;
-  --control-border-hover: #505050;
+  --control-border: #2d3038;
+  --control-border-hover: #484d5a;
 
   /* Dividers */
-  --border-subtle: #222222;
-  --border-heavy: #484848;
+  --border-subtle: #202228;
+  --border-heavy: #41454f;
 
   /* Brand/accent */
   --accent: #4776ff;

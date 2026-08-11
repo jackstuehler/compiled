@@ -1,35 +1,46 @@
 /* Horizontal navigation between the app's pages. */
 .nav {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-5);
   margin: var(--space-4) 0 var(--space-5);
 }
 
 .link {
-  padding: 8px 14px;
+  padding: 6px 0;
+
   font-size: 15px;
   font-weight: 400;
+  white-space: nowrap;
 
-  color: inherit;
+  color: var(--text-muted);
   text-decoration: none;
 
-  background-color: var(--control-background);
-  border: 1px solid var(--control-border);
-  border-radius: var(--radius);
+  border-bottom: 1px solid transparent;
 
   transition:
-    background-color 120ms,
+    color 120ms,
     border-color 120ms;
 }
 
+/* Reserve the width of the bold label so the navigation does not shift
+   when the active page changes. */
+.link::before {
+  content: attr(data-label);
+  display: block;
+  height: 0;
+
+  font-weight: 600;
+  visibility: hidden;
+  overflow: hidden;
+}
+
 .link:hover {
-  border-color: var(--control-border-hover);
+  color: var(--foreground);
 }
 
 .link.active {
   font-weight: 600;
   color: var(--foreground);
 
-  background-color: var(--accent-soft);
-  border-color: var(--accent);
+  border-bottom-color: var(--accent);
 }
