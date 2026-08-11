@@ -77,6 +77,10 @@ The application joins institution-level and field-of-study data by college and u
 
 The scatterplot is implemented with with SVG rather than a charting library. It implements coordinate scaling, dynamically generated axis ticks, hover tooltips, search highlighting, and click-and-drag zoom. Zoom selections are converted from screen coordinates back into data values, allowing the chart to recompute its axes for the selected region.
 
+### Performance
+
+Compiled maintains a lightweight frontend without a UI or charting library. Across three Lighthouse tests, the deployed comparison table and scatterplot achieved median Performance scores of **95/100 and 98/100 on mobile**, respectively, and **100/100 on desktop**, with zero cumulative layout shift.
+
 ### Data Validation
 
 While building the scatterplot, a large group of programs unexpectedly appeared at `$0` in major-specific earnings. Investigation showed that 42,491 privacy-suppressed values from the source data had been loaded as `0` rather than `NULL`, causing an existing `IS NOT NULL` filter to include them.
