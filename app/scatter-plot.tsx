@@ -165,7 +165,7 @@ export default function ScatterPlot({
             className={`${ui.input} ${styles.fullWidth}`}
             type="search"
             value={query}
-            placeholder="e.g. MIT or Tufts"
+            placeholder="e.g. Tufts"
             onChange={handleQueryChange}
           />
         </label>

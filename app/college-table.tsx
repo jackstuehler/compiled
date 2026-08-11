@@ -133,7 +133,7 @@ export default function CollegeTable({ rows }: { rows: School[] }) {
             className={ui.input}
             type="search"
             value={query}
-            placeholder="e.g. MIT or Tufts"
+            placeholder="e.g. Tufts"
             onChange={handleQueryChange}
           />
         </label>

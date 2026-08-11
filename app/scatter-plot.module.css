@@ -3,70 +3,71 @@
 /* Sidebar + chart. The chart column is allowed to shrink below its contents,
    preventing wide SVGs from forcing horizontal scrolling. */
 .layout {
-	display: grid;
-	grid-template-columns: 260px minmax(0, 1fr);
-	gap: var(--space-6);
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: var(--space-6);
 
-	flex: 1;
-	min-height: 0;
-	overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 
-	min-width: 0;
+  min-width: 0;
+  padding-inline: 4px;
 }
 
 /* The chart fills the remaining space beside the sidebar. */
 .chartArea {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-	min-width: 0;
-	min-height: 0;
+  min-width: 0;
+  min-height: 0;
 }
 
 .summary {
-	flex-shrink: 0;
-	margin-bottom: var(--space-2);
-	font-size: 13px;
+  flex-shrink: 0;
+  margin-bottom: var(--space-2);
+  font-size: 13px;
 }
 
 .droppedNote {
-	color: var(--text-muted);
+  color: var(--text-muted);
 }
 
 /* The match count is the one part of this line that changes as you type, so it
    carries a little more weight than the rest. */
 .matchNote {
-	font-weight: 600;
+  font-weight: 600;
 }
 
 /* Lets shared controls stretch across the sidebar. */
 .fullWidth {
-	width: 100%;
+  width: 100%;
 }
 
 /* ---------- Mobile layout ---------- */
 
 @media (max-width: 900px) {
-	.layout {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-5);
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
 
-		overflow: visible;
-	}
+    overflow: visible;
+  }
 
-	.sidebar,
-	.chartArea {
-		width: 100%;
-	}
+  .sidebar,
+  .chartArea {
+    width: 100%;
+  }
 
-	.chartArea {
-		min-height: 0;
-	}
+  .chartArea {
+    min-height: 0;
+  }
 }

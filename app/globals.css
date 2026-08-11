@@ -1,9 +1,9 @@
 :root {
   /* Core surfaces */
-  --background: #111111;
-  --surface: #171717;
-  --surface-hover: #1d1d1d;
-  --surface-raised: #1a1a1a;
+  --background: #090909;
+  --surface: #101010;
+  --surface-hover: #171717;
+  --surface-raised: #141414;
 
   /* Text */
   --foreground: #f2f2f2;
@@ -12,17 +12,17 @@
 
   /* Controls */
   --control-background: var(--surface);
-  --control-border: #3a3a3a;
-  --control-border-hover: #606060;
+  --control-border: #303030;
+  --control-border-hover: #505050;
 
   /* Dividers */
-  --border-subtle: #292929;
-  --border-heavy: #565656;
+  --border-subtle: #222222;
+  --border-heavy: #484848;
 
   /* Brand/accent */
-  --accent: #4f86e8;
-  --accent-hover: #6b9af0;
-  --accent-soft: #4f86e826;
+  --accent: #4776ff;
+  --accent-hover: #6b91ff;
+  --accent-soft: #4776ff26;
 
   /* Chart */
   --point-color: var(--accent);
