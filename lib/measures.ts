@@ -34,7 +34,7 @@ export type Major = {
 };
 
 /** Official names at or above this length use short_name when available. */
-export const NAME_CUTOFF = 40;
+export const NAME_CUTOFF = 30;
 
 /**
  * The name to put on screen for one college: the longest one that still fits.
