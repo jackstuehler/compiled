@@ -33,23 +33,6 @@ jobs:
             exit 1
           fi
 
-      # TEMPORARY — diagnostic only. Prints the OIDC claims so we can see the
-      # exact "sub" string AWS is comparing against the IAM trust policy.
-      # Decodes only the JWT payload, never the token or its signature.
-      # Delete this step once the trust policy is confirmed working.
-      - name: Show the OIDC claims
-        run: |
-          TOKEN=$(curl -sS \
-            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
-          PAYLOAD=$(printf '%s' "$TOKEN" | cut -d. -f2)
-          PAD=$(( (4 - ${#PAYLOAD} % 4) % 4 ))
-          if [ "$PAD" -gt 0 ]; then
-            PAYLOAD="${PAYLOAD}$(printf '=%.0s' $(seq 1 "$PAD"))"
-          fi
-          printf '%s' "$PAYLOAD" | tr '_-' '/+' | base64 -d \
-            | jq '{sub, aud, repository, repository_owner, ref, event_name, workflow_ref}'
-
       - name: Get AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
