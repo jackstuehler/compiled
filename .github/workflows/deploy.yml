@@ -1,0 +1,73 @@
+name: Deploy CompilEd to EC2
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Commit SHA to deploy (leave blank for the latest commit on main)"
+        required: false
+        default: ""
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-compiled
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  INSTANCE_ID: i-0889502e3ef3f5544
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate the ref input
+        env:
+          REF_INPUT: ${{ inputs.ref }}
+        run: |
+          if [ -n "$REF_INPUT" ] && ! printf '%s' "$REF_INPUT" | grep -Eq '^[A-Za-z0-9._/-]+$'; then
+            echo "Refusing to deploy: ref contains unexpected characters."
+            exit 1
+          fi
+
+      - name: Get AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::425827481225:role/GitHubActionsDeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Send deploy command
+        id: send
+        env:
+          REF: ${{ inputs.ref || github.sha }}
+        run: |
+          CID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --comment "CompilEd ${GITHUB_SHA::7}" \
+            --parameters "{\"commands\":[\"sudo -iu ubuntu /usr/local/bin/deploy-compiled.sh $REF\"],\"executionTimeout\":[\"900\"]}" \
+            --query "Command.CommandId" --output text)
+          echo "command_id=$CID" >> "$GITHUB_OUTPUT"
+          echo "Sent command $CID deploying $REF"
+
+      - name: Wait for the result
+        run: |
+          CID="${{ steps.send.outputs.command_id }}"
+          for i in $(seq 1 90); do
+            STATUS=$(aws ssm get-command-invocation \
+              --command-id "$CID" --instance-id "$INSTANCE_ID" \
+              --query "Status" --output text 2>/dev/null || echo "Pending")
+            case "$STATUS" in Success|Failed|Cancelled|TimedOut) break ;; esac
+            sleep 5
+          done
+
+          aws ssm get-command-invocation \
+            --command-id "$CID" --instance-id "$INSTANCE_ID" \
+            --query "{Status:Status,Output:StandardOutputContent,Error:StandardErrorContent}" \
+            --output json | tee result.json
+
+          jq -r '.Output' result.json
+          [ "$(jq -r '.Status' result.json)" = "Success" ] || exit 1
