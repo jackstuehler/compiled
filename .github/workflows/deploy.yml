@@ -1,4 +1,4 @@
-name: Deploy CompilEd to EC2
+name: Deploy Compiled to EC2
 
 on:
   workflow_dispatch:
