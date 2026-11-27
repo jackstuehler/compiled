@@ -15,7 +15,7 @@
   color: inherit;
 
   background-color: var(--control-background);
-  border: 1px solid var(--control-border);
+  border: var(--border-width) solid var(--control-border);
   border-radius: var(--radius);
 
   transition:
@@ -55,11 +55,13 @@
   color: inherit;
   background-color: var(--surface-raised);
 
-  border: 1px solid var(--control-border);
+  border: var(--border-width) solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  box-shadow: 0 16px 40px rgb(0 0 0 / 45%);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 16%);
 }
 
 .dialog::backdrop {
-  background-color: rgb(0 0 0 / 55%);
+  background-color: rgb(17 24 39 / 30%);
 }
+.input, .button { min-height: var(--control-height); max-width: 100%; }
+.dialog { margin: auto; max-width: calc(100vw - 2rem); }

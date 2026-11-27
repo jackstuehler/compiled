@@ -1,28 +1,13 @@
-import MajorPicker from "./major-picker";
-import CollegeTable from "./college-table";
 import { DEFAULT_MAJOR, loadMajorData } from "@/lib/queries";
-import styles from "./page.module.css";
+import Rankings from "./rankings/rankings";
 
-export default async function Home({
+export default async function RankingsPage({
   searchParams,
 }: {
   searchParams: Promise<{ major?: string }>;
 }) {
   const { major } = await searchParams;
   const selected = major ?? DEFAULT_MAJOR;
-
   const { majors, schools } = await loadMajorData(selected);
-
-  return (
-    <div className={styles.content}>
-      <section className={styles.majorControl}>
-        <label className={styles.majorLabel}>
-          Major
-          <MajorPicker majors={majors} selected={selected} />
-        </label>
-      </section>
-
-      <CollegeTable rows={schools} />
-    </div>
-  );
+  return <Rankings key={selected} rows={schools} majors={majors} selected={selected} />;
 }

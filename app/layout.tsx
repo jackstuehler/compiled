@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Nav from "./nav";
+import AppearanceToggle from "./appearance";
+import { appearanceInitScript } from "./appearance-storage";
 import styles from "./layout.module.css";
 import "./globals.css";
 
@@ -16,25 +18,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: appearanceInitScript }} />
+      </head>
       <body>
         <main className={styles.page}>
           <header className={styles.header}>
-            <h1 className={styles.brand}>
+            <div className={styles.brand}>
               Compil<span className={styles.brandAccent}>ed.</span>
-            </h1>
+            </div>
 
-            <div className={styles.navArea}>
+            <div className={styles.headerControls}>
               {/* Nav reads the URL query string, so it needs a Suspense boundary
                   during server rendering. The fallback reserves its space to
                   prevent the header from shifting when Nav appears. */}
               <Suspense fallback={<div className={styles.navPlaceholder} />}>
                 <Nav />
               </Suspense>
+              <AppearanceToggle />
             </div>
 
-            {/* Balances the logo column so the navigation stays centered. */}
-            <div className={styles.headerRight} aria-hidden="true" />
           </header>
 
           {children}

@@ -1,28 +1,30 @@
 :root {
+  color-scheme: light dark;
   /* Core surfaces */
-  --background: #090a0c;
-  --surface: #0e0f13;
-  --surface-hover: #15171d;
-  --surface-raised: #121318;
+  --background: light-dark(#ffffff, #0c0c0d);
+  --surface: light-dark(#f7f8fa, #101115);
+  --surface-hover: light-dark(#f0f3fa, #181a20);
+  --surface-raised: light-dark(#ffffff, #16181e);
 
   /* Text */
-  --foreground: #f2f2f2;
-  --text-secondary: #b8b8b8;
-  --text-muted: #7f7f7f;
+  --foreground: light-dark(#171717, #f4f4f5);
+  --text-secondary: light-dark(#4e5158, #c5c5c8);
+  --text-muted: light-dark(#60646d, #a4a4a9);
 
   /* Controls */
-  --control-background: var(--surface);
-  --control-border: #2d3038;
-  --control-border-hover: #484d5a;
+  --control-background: light-dark(#ffffff, #101115);
+  --control-border: light-dark(#aeb4bf, #5d606b);
+  --control-border-hover: light-dark(#757e8f, #838794);
 
   /* Dividers */
-  --border-subtle: #202228;
-  --border-heavy: #41454f;
+  --border-subtle: light-dark(#e2e4e9, #2d3038);
+  --border-width: 1px;
 
   /* Brand/accent */
   --accent: #4776ff;
-  --accent-hover: #6b91ff;
-  --accent-soft: #4776ff26;
+  --on-accent: #171717;
+  --accent-ink: light-dark(#274fc7, #a9c0ff);
+  --accent-soft: light-dark(#eaf0ff, #263453);
 
   /* Chart */
   --point-color: var(--accent);
@@ -41,10 +43,11 @@
   --space-7: 40px;
 
   /* Layout */
-  --page-max-width: 1700px;
-  --page-padding-x: 40px;
-  --page-padding-y: 24px;
+  --control-height: 38px;
 }
+
+:root[data-appearance="light"] { color-scheme: light; }
+:root[data-appearance="dark"] { color-scheme: dark; }
 
 html {
   height: 100%;
@@ -63,6 +66,8 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: system-ui, sans-serif;
+  font-size: .9375rem;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -76,4 +81,40 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h1 {
+  font-size: clamp(1.65rem, 1.1rem + 1.3vw, 2.35rem);
+  letter-spacing: -.045em;
+  line-height: 1.12;
+}
+
+h2 {
+  font-size: 1.125rem;
+  line-height: 1.25;
+}
+
+@media (pointer: coarse) {
+  :root { --control-height: 44px; }
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Keep the native select interaction and give its indicator a consistent inset. */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  padding-inline-end: 2.25rem;
+  background-image:
+    linear-gradient(45deg, transparent 43%, currentColor 44% 56%, transparent 57%),
+    linear-gradient(135deg, transparent 43%, currentColor 44% 56%, transparent 57%);
+  background-position: right 1.0625rem center, right .75rem center;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+}
+
+@media (forced-colors: active) {
+  select:not([multiple]):not([size]) {
+    appearance: auto;
+    padding-inline-end: .625rem;
+    background-image: none;
+  }
 }

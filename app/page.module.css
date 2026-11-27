@@ -1,4 +1,4 @@
-/* Page-level layout for the table view. */
+/* Shared page layout and heading spacing. */
 
 .content {
   display: flex;
@@ -7,9 +7,19 @@
   flex-direction: column;
 }
 
-/* The major picker sits slightly apart from the table controls below it. */
 .majorControl {
-  margin-bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 641px) {
+  .majorControl {
+    min-height: calc(12px * 1.45 + var(--space-1) + var(--control-height));
+  }
 }
 
 .majorLabel {

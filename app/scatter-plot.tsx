@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ChangeEvent } from "react";
-import MajorPicker from "./major-picker";
+import type { ChangeEvent, ReactNode } from "react";
 import FilterButton, {
   NO_FILTERS,
   matchesFilters,
@@ -16,7 +15,6 @@ import {
   measure,
   searchableText,
   tokenize,
-  type Major,
   type School,
 } from "@/lib/measures";
 import ui from "./ui.module.css";
@@ -52,12 +50,10 @@ function AxisSelect({
 
 export default function ScatterPlot({
   rows,
-  majors,
-  selected,
+  majorPicker,
 }: {
   rows: School[];
-  majors: Major[];
-  selected: string;
+  majorPicker: ReactNode;
 }) {
   const [xKey, setXKey] = useState("sat_avg");
   const [yKey, setYKey] = useState("earn_mdn_4yr");
@@ -69,9 +65,8 @@ export default function ScatterPlot({
 
   // Search highlights points rather than removing them, so `query` is not a
   // dependency and typing does not reset the chart's point set or zoom state.
-  const { points, dropped } = useMemo(() => {
+  const points = useMemo(() => {
     const points: Point[] = [];
-    let dropped = 0;
 
     for (const school of rows) {
       if (!matchesFilters(school, filters)) {
@@ -84,12 +79,10 @@ export default function ScatterPlot({
       // A college can only be plotted when both axis values are numeric.
       if (typeof x === "number" && typeof y === "number") {
         points.push({ id: school.unitid, label: collegeName(school), x, y });
-      } else {
-        dropped += 1;
       }
     }
 
-    return { points, dropped };
+    return points;
   }, [rows, filters, xMeasure, yMeasure]);
 
   // Precompute searchable name tokens when the college dataset changes.
@@ -150,17 +143,10 @@ export default function ScatterPlot({
   return (
     <div className={styles.layout}>
       <aside className={styles.sidebar}>
-        <label className={ui.field}>
-          Major
-          <MajorPicker
-            majors={majors}
-            selected={selected}
-            className={`${ui.input} ${styles.fullWidth}`}
-          />
-        </label>
+        {majorPicker}
 
         <label className={ui.field}>
-          Search
+          Highlight colleges
           <input
             className={`${ui.input} ${styles.fullWidth}`}
             type="search"
@@ -185,12 +171,6 @@ export default function ScatterPlot({
       <div className={styles.chartArea}>
         <p className={styles.summary}>
           {summary}
-          {dropped > 0 && (
-            <span className={styles.droppedNote}>
-              {" "}
-              · {dropped.toLocaleString()} hidden (missing data on one axis)
-            </span>
-          )}
           {matchNote !== null && (
             <span className={styles.matchNote}> · {matchNote}</span>
           )}

@@ -1,87 +1,74 @@
-/* ---------- Overall page layout ---------- */
-
-/* Centers the app, constrains its maximum width, and lets the main content
-   fill the viewport beneath the header. */
 .page {
-  width: 100%;
-  min-width: 0;
+  width: min(100%, 96rem);
+  margin: auto;
+  padding: 0 clamp(1rem, 3.5vw, 3.5rem) 1.5rem;
   height: 100dvh;
-  max-width: var(--page-max-width);
-  margin: 0 auto;
-  padding: var(--page-padding-y) var(--page-padding-x) var(--space-6);
-
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-
-  color: var(--foreground);
-  background-color: var(--background);
 }
-
-/* Three-column grid:
-   logo | navigation | spacer.
-   The empty right column keeps the navigation centered even though the logo 
-   sits on the left. */
 .header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  margin-bottom: var(--space-4);
+  justify-content: space-between;
+  padding: .65rem 0;
+  margin-bottom: clamp(1rem, 2vw, 1.75rem);
 }
-
-/* ---------- Branding ---------- */
-
 .brand {
-  justify-self: start;
-  margin: 0;
-  color: var(--foreground);
-  letter-spacing: -0.04em;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: 1.1;
 }
-
-/* Only the "ed" is accented to reinforce the brand without overpowering it. */
-.brandAccent {
-  color: var(--accent);
-}
-
-/* ---------- Navigation ---------- */
-
-.navArea {
-  justify-self: center;
-}
-
-.headerRight {
-  justify-self: end;
-  width: 40px;
-  height: 40px;
-}
-
-/* Reserves space for the navigation while it loads so the header does not
-   shift horizontally. */
-.navPlaceholder {
-  width: 220px;
-  height: 39px;
-}
-
-/* Stack the header vertically on smaller screens. */
-@media (max-width: 900px) {
-  .page {
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
-    padding-inline: var(--space-4);
+@media (min-width: 641px) {
+  .brand {
+    align-self: flex-end;
   }
+}
 
+.brandAccent { color: var(--accent); }
+.navPlaceholder { height: 44px; }
+@media (max-width: 900px), (max-height: 580px) {
+  .page { height: auto; min-height: 100dvh; }
+}
+
+@media (max-width: 640px) {
   .header {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .65rem;
   }
+}
 
-  .brand,
-  .navArea {
-    justify-self: start;
-  }
+.headerControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .65rem 1rem;
+  min-width: 0;
+}
 
-  .headerRight {
-    display: none;
+.appearance {
+  display: grid;
+  place-items: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.appearance:hover {
+  background: var(--surface-hover);
+}
+
+@media (max-width: 640px) {
+  .headerControls {
+    justify-content: flex-start;
   }
 }

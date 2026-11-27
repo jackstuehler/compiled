@@ -4,8 +4,8 @@
    preventing wide SVGs from forcing horizontal scrolling. */
 .layout {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: var(--space-6);
+  grid-template-columns: clamp(12rem, 18vw, 15rem) minmax(0, 1fr);
+  gap: var(--space-5);
 
   flex: 1;
   min-height: 0;
@@ -32,10 +32,6 @@
   flex-shrink: 0;
   margin-bottom: var(--space-2);
   font-size: 13px;
-}
-
-.droppedNote {
-  color: var(--text-muted);
 }
 
 /* The match count is the one part of this line that changes as you type, so it
@@ -66,4 +62,9 @@
   .chartArea {
     min-height: 0;
   }
+}
+.sidebar { align-self: start; padding: .85rem; border-radius: 14px; background: var(--surface); }
+.summary { color: var(--text-secondary); }
+@media (max-width: 900px) {
+  .sidebar { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
 }

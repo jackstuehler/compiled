@@ -1,46 +1,37 @@
-/* Horizontal navigation between the app's pages. */
 .nav {
   display: flex;
-  gap: var(--space-5);
-  margin: var(--space-4) 0 var(--space-5);
+  align-items: stretch;
 }
 
 .link {
-  padding: 6px 0;
-
-  font-size: 15px;
-  font-weight: 400;
-  white-space: nowrap;
-
-  color: var(--text-muted);
-  text-decoration: none;
-
-  border-bottom: 1px solid transparent;
-
-  transition:
-    color 120ms,
-    border-color 120ms;
-}
-
-/* Reserve the width of the bold label so the navigation does not shift
-   when the active page changes. */
-.link::before {
-  content: attr(data-label);
-  display: block;
-  height: 0;
-
+  --tab-inset: .95rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: var(--control-height);
+  padding-inline: var(--tab-inset);
+  color: var(--text-secondary);
+  font-size: .875rem;
   font-weight: 600;
-  visibility: hidden;
-  overflow: hidden;
+  text-align: center;
 }
 
-.link:hover {
+.link:hover,
+.active {
   color: var(--foreground);
 }
 
-.link.active {
-  font-weight: 600;
-  color: var(--foreground);
+.active::after {
+  position: absolute;
+  inset-inline: var(--tab-inset);
+  inset-block-end: 0;
+  height: 2px;
+  background: var(--accent);
+  content: "";
+}
 
-  border-bottom-color: var(--accent);
+@media (max-width: 640px) {
+  .link {
+    --tab-inset: clamp(.35rem, 2vw, .75rem);
+  }
 }
