@@ -44,13 +44,16 @@
   width: 100%;
   overflow: auto;
 
-  border: 1px solid var(--border-subtle);
+  border: var(--border-width) solid var(--border-subtle);
   border-radius: var(--radius);
 }
 
 .table {
-  border-collapse: collapse;
-  font-size: 14px;
+  width: max-content;
+  border-spacing: 0;
+  table-layout: auto;
+  font-variant-numeric: tabular-nums;
+  font-size: .8125rem;
 }
 
 .table th,
@@ -63,6 +66,7 @@
   position: sticky;
   top: 0;
   z-index: 2;
+  vertical-align: middle;
 
   text-align: left;
   background-color: var(--surface);
@@ -73,7 +77,7 @@
 }
 
 .table td {
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: var(--border-width) solid var(--border-subtle);
 }
 
 .table tbody tr:hover td {
@@ -114,6 +118,80 @@
 }
 
 .rank {
-  margin-right: var(--space-2);
   color: var(--text-muted);
+}
+.controls { padding: .7rem; background: var(--surface); border-radius: 12px; }
+.sortGroup { margin-left: auto; }
+.count { color: var(--text-secondary); }
+.table td, .table th { padding: .46rem .75rem; }
+.table th { font-size: .8rem; color: var(--text-secondary); }
+.table th.numeric { text-align: right; }
+.sorted { text-align: right; font-weight: 650; }
+/* A bounded inner grid keeps both the rank and wrapped text inside the pinned cell. */
+.collegeCell {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  align-items: center;
+  gap: .45rem;
+  width: clamp(9rem, 35vw, 17rem);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.collegeHeading {
+  grid-column: 2;
+  text-align: left;
+}
+.identity small { font-weight: 400; color: var(--text-muted); }
+.rank { font-size: .8rem; }
+@media (max-width: 900px) {
+  .scrollBox { flex: auto; max-height: 70dvh; }
+  .sortGroup { margin-left: 0; }
+  .table td, .table th { padding: .46rem .5rem; }
+}
+
+.columnsDialog {
+  width: min(38rem, calc(100% - 2rem));
+  min-width: 0;
+}
+
+.columnsForm {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.columnActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.columnChoices {
+  min-width: 0;
+  max-height: min(50dvh, 28rem);
+  overflow: auto;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: .25rem .75rem;
+}
+
+.columnChoices label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+
+.columnsDone {
+  align-self: end;
 }

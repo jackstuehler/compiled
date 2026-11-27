@@ -23,6 +23,31 @@ export type School = {
   earn_mdn_4yr: number | null; // median salary for the selected major
   grad_debt_mdn: number | null; // median debt across all majors
   debt_all_stgp_eval_mdn: number | null; // median debt for the selected major
+
+  satvr25: number | null;
+  satvr50: number | null;
+  satvr75: number | null;
+  satmt25: number | null;
+  satmt50: number | null;
+  satmt75: number | null;
+  actcm25: number | null;
+  actcm75: number | null;
+  locale: number | null;
+  retention_rate: string | null;
+  repay_3yr: string | null;
+  npt4_0_30: number | null;
+  npt4_30_48: number | null;
+  npt4_48_75: number | null;
+  npt4_75_110: number | null;
+  npt4_110_plus: number | null;
+
+  debt_all_stgp_any_mdn: number | null;
+  debt_all_pp_eval_mdn: number | null;
+  debt_all_pp_any_mdn: number | null;
+  debt_all_stgp_eval_mdn10yrpay: number | null;
+  earn_count_wne_4yr: number | null;
+  major_completions: number | null;
+  earn_mdn_4yr_nat: number | null;
 };
 
 /** Shown in place of a value the data doesn't have. */
@@ -191,13 +216,13 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "stufacr",
-    label: "Stu:Fac",
+    label: "Student–faculty ratio",
     format: "number",
     get: (school) => school.stufacr,
   },
   {
     key: "adm_rate",
-    label: "Acc. Rate",
+    label: "Admission rate",
     format: "percent",
     // Arrives from MySQL as a string, so convert before anyone sorts on it.
     get: (school) => {
@@ -215,13 +240,13 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "actcm50",
-    label: "Mdn. ACT",
+    label: "Median ACT",
     format: "number",
     get: (school) => school.actcm50,
   },
   {
     key: "grad_rate",
-    label: "Grad Rate",
+    label: "Graduation rate",
     format: "percent",
     get: (school) => {
       if (school.grad_rate === null) {
@@ -232,31 +257,31 @@ export const MEASURES: Measure[] = [
   },
   {
     key: "npt4",
-    label: "Net Cost",
+    label: "Annual net price",
     format: "money",
     get: (school) => school.npt4,
   },
   {
     key: "md_earn_4yr",
-    label: "Mdn. Salary",
+    label: "College earnings",
     format: "money",
     get: (school) => school.md_earn_4yr,
   },
   {
     key: "earn_mdn_4yr",
-    label: "Major Salary",
+    label: "Major earnings (4 yr)",
     format: "money",
     get: (school) => school.earn_mdn_4yr,
   },
   {
     key: "grad_debt_mdn",
-    label: "Mdn. Debt",
+    label: "College debt",
     format: "money",
     get: (school) => school.grad_debt_mdn,
   },
   {
     key: "debt_all_stgp_eval_mdn",
-    label: "Major Debt",
+    label: "Major debt",
     format: "money",
     get: (school) => school.debt_all_stgp_eval_mdn,
   },

@@ -12,18 +12,10 @@ export type Point = {
   y: number;
 };
 
-// The chart's own coordinate system. The SVG is scaled to fit whatever space
-// it's given, so these behave like proportions rather than screen pixels.
-const WIDTH = 1000;
-const HEIGHT = 540;
+const INITIAL_SIZE = { width: 1000, height: 540 };
 
-// Room around the plot area for the tick labels and axis titles. The left side
-// needs the most, because that's where the y-axis numbers go.
-const PADDING = { top: 16, right: 24, bottom: 56, left: 84 };
-
-// The plot area itself — the rectangle the dots live in.
-const PLOT_WIDTH = WIDTH - PADDING.left - PADDING.right;
-const PLOT_HEIGHT = HEIGHT - PADDING.top - PADDING.bottom;
+// Room for axis titles and tick labels, in CSS pixels at normal chart sizes.
+const PADDING = { top: 10, right: 28, bottom: 48, left: 76 };
 
 // Tooltip dimensions are estimated from text length rather than measured.
 const CHAR_WIDTH = 6.7; // rough width of one character at 12px system-ui
@@ -212,6 +204,28 @@ export default function Chart({
     setZoom(null);
   }, [points]);
 
+  const [chartSize, setChartSize] = useState(INITIAL_SIZE);
+  const hasPoints = points.length > 0;
+
+  useEffect(() => {
+    const chart = svgRef.current;
+    if (!hasPoints || !chart) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const width = Math.max(320, Math.round(entry.contentRect.width));
+      const height = Math.max(260, Math.round(entry.contentRect.height));
+      setChartSize((previous) =>
+        previous.width === width && previous.height === height ? previous : { width, height },
+      );
+    });
+    observer.observe(chart);
+    return () => observer.disconnect();
+  }, [hasPoints]);
+
+  const { width: chartWidth, height: chartHeight } = chartSize;
+  const plotWidth = chartWidth - PADDING.left - PADDING.right;
+  const plotHeight = chartHeight - PADDING.top - PADDING.bottom;
+
   if (axes === null) {
     return (
       <p className={styles.emptyMessage}>
@@ -225,22 +239,22 @@ export default function Chart({
 
   function scaleX(value: number) {
     const fraction = (value - xAxis.low) / (xAxis.high - xAxis.low);
-    return PADDING.left + fraction * PLOT_WIDTH;
+    return PADDING.left + fraction * plotWidth;
   }
 
   // SVG y coordinates increase downward, so the vertical scale is inverted.
   function scaleY(value: number) {
     const fraction = (value - yAxis.low) / (yAxis.high - yAxis.low);
-    return PADDING.top + PLOT_HEIGHT - fraction * PLOT_HEIGHT;
+    return PADDING.top + plotHeight - fraction * plotHeight;
   }
 
   function valueAtX(pixelX: number) {
-    const fraction = (pixelX - PADDING.left) / PLOT_WIDTH;
+    const fraction = (pixelX - PADDING.left) / plotWidth;
     return xAxis.low + fraction * (xAxis.high - xAxis.low);
   }
 
   function valueAtY(pixelY: number) {
-    const fraction = (PADDING.top + PLOT_HEIGHT - pixelY) / PLOT_HEIGHT;
+    const fraction = (PADDING.top + plotHeight - pixelY) / plotHeight;
     return yAxis.low + fraction * (yAxis.high - yAxis.low);
   }
 
@@ -263,8 +277,8 @@ export default function Chart({
     const chartPoint = screenPosition.matrixTransform(chartToScreen.inverse());
 
     return {
-      x: clamp(chartPoint.x, PADDING.left, PADDING.left + PLOT_WIDTH),
-      y: clamp(chartPoint.y, PADDING.top, PADDING.top + PLOT_HEIGHT),
+      x: clamp(chartPoint.x, PADDING.left, PADDING.left + plotWidth),
+      y: clamp(chartPoint.y, PADDING.top, PADDING.top + plotHeight),
     };
   }
 
@@ -368,7 +382,7 @@ export default function Chart({
     let y = scaleY(point.y) - height - TOOLTIP_GAP;
 
     // If that would run off the right edge, put it to the left of the dot.
-    if (x + width > WIDTH) {
+    if (x + width > chartWidth) {
       x = scaleX(point.x) - width - TOOLTIP_GAP;
     }
     // If it would run off the top edge, put it below the dot.
@@ -428,8 +442,8 @@ export default function Chart({
   return (
     <svg
       ref={svgRef}
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      preserveAspectRatio="xMidYMin meet"
+      viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+      preserveAspectRatio="xMinYMin meet"
       className={styles.chart}
       role="img"
       aria-label={description}
@@ -444,8 +458,8 @@ export default function Chart({
           <rect
             x={PADDING.left}
             y={PADDING.top}
-            width={PLOT_WIDTH}
-            height={PLOT_HEIGHT}
+            width={plotWidth}
+            height={plotHeight}
           />
         </clipPath>
       </defs>
@@ -458,12 +472,12 @@ export default function Chart({
             x1={scaleX(tickValue)}
             y1={PADDING.top}
             x2={scaleX(tickValue)}
-            y2={PADDING.top + PLOT_HEIGHT}
+            y2={PADDING.top + plotHeight}
           />
           <text
             className={styles.tickLabel}
             x={scaleX(tickValue)}
-            y={PADDING.top + PLOT_HEIGHT + 18}
+            y={PADDING.top + plotHeight + 18}
             textAnchor="middle"
           >
             {formatTick(tickValue, xFormat, xAxis.step)}
@@ -478,7 +492,7 @@ export default function Chart({
             className={styles.gridLine}
             x1={PADDING.left}
             y1={scaleY(tickValue)}
-            x2={PADDING.left + PLOT_WIDTH}
+            x2={PADDING.left + plotWidth}
             y2={scaleY(tickValue)}
           />
           <text
@@ -498,14 +512,14 @@ export default function Chart({
         x1={PADDING.left}
         y1={PADDING.top}
         x2={PADDING.left}
-        y2={PADDING.top + PLOT_HEIGHT}
+        y2={PADDING.top + plotHeight}
       />
       <line
         className={styles.axisLine}
         x1={PADDING.left}
-        y1={PADDING.top + PLOT_HEIGHT}
-        x2={PADDING.left + PLOT_WIDTH}
-        y2={PADDING.top + PLOT_HEIGHT}
+        y1={PADDING.top + plotHeight}
+        x2={PADDING.left + plotWidth}
+        y2={PADDING.top + plotHeight}
       />
 
       <g clipPath={`url(#${CLIP_ID})`}>
@@ -561,8 +575,8 @@ export default function Chart({
 
       <text
         className={styles.axisTitle}
-        x={PADDING.left + PLOT_WIDTH / 2}
-        y={HEIGHT - 8}
+        x={PADDING.left + plotWidth / 2}
+        y={chartHeight - 8}
         textAnchor="middle"
       >
         {xLabel}
@@ -573,7 +587,7 @@ export default function Chart({
       <text
         className={styles.axisTitle}
         transform="rotate(-90)"
-        x={-(PADDING.top + PLOT_HEIGHT / 2)}
+        x={-(PADDING.top + plotHeight / 2)}
         y={16}
         textAnchor="middle"
       >
@@ -588,7 +602,7 @@ export default function Chart({
         >
           <rect
             className={styles.resetBox}
-            x={PADDING.left + PLOT_WIDTH - RESET_WIDTH - RESET_INSET}
+            x={PADDING.left + plotWidth - RESET_WIDTH - RESET_INSET}
             y={PADDING.top + RESET_INSET}
             width={RESET_WIDTH}
             height={RESET_HEIGHT}
@@ -596,7 +610,7 @@ export default function Chart({
           />
           <text
             className={styles.resetLabel}
-            x={PADDING.left + PLOT_WIDTH - RESET_WIDTH / 2 - RESET_INSET}
+            x={PADDING.left + plotWidth - RESET_WIDTH / 2 - RESET_INSET}
             y={PADDING.top + RESET_INSET + 16}
             textAnchor="middle"
           >
